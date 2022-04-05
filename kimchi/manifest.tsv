@@ -1,4 +1,4 @@
 sample-id	absolute-filepath
-ERR1883195	$PWD/kimchi/ERR1883195.fastq
-kimchi	$PWD/kimchi/kimchi.v001.fastq
-combined	$PWD/kimchi/combined.fastq
+ERR1883195	/content/Merged_data/kimchi/ERR1883195.fastq
+kimchi	/content/Merged_data/kimchi/kimchi.v001.fastq
+combined	/content/Merged_data/kimchi/combined.fastq
