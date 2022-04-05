@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Taxa niche/production overlap</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700&display=swap" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@5.15.0/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>
+
+    <style>
+    #vis {
+        width: 100%;
+        margin: 1em;
+        display: block;
+    }
+    </style>
+  </head>
+  <body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">
+        Taxa niche/production overlap
+      </h1>
+      <p class="subtitle">
+        Each point denotes the reduced import/export fluxes for a single taxon
+        in a single sample. If two points are close to each other they consume
+        (for direction="import") or produce (for direction="export") the same
+        metabolites.<br>
+        Hover over each point to see its annotations. You can click a point
+        to select only that taxon. Click on an empty part of the plot to
+        reset the selection.<br>
+        Use the "..." menu in the
+        upper right hand side to export the plot into various formats.
+      </p>
+    </div>
+    <!-- Container for the visualization -->
+    <div class="container">
+    <div id="vis"></div>
+    <a href="#" class="button is-primary" onclick="download_data('reduced')">Download as CSV...</a>
+
+    </div>
+    <script>
+      // Assign the specification to a local variable vlSpec.
+      var vlSpec = {
+        $schema: "https://vega.github.io/schema/vega-lite/v4.json",
+        width: 600,
+        height: 500,
+        data: {
+            values: [{"sample_id":"ERR1883195","taxon":"Alistipes","TSNE 1":-32.7673072815,"TSNE 2":32.3161239624},{"sample_id":"ERR1883195","taxon":"Bacteroides","TSNE 1":-3.7030050755,"TSNE 2":-236.3874511719},{"sample_id":"ERR1883195","taxon":"Blautia","TSNE 1":-25.6547050476,"TSNE 2":96.8296585083},{"sample_id":"ERR1883195","taxon":"Coprococcus","TSNE 1":-55.0757980347,"TSNE 2":182.84324646},{"sample_id":"ERR1883195","taxon":"Faecalibacterium","TSNE 1":113.0358657837,"TSNE 2":-100.8420944214},{"sample_id":"ERR1883195","taxon":"Parabacteroides","TSNE 1":183.3730010986,"TSNE 2":-140.7201690674},{"sample_id":"ERR1883195","taxon":"Roseburia","TSNE 1":225.2428741455,"TSNE 2":-100.3061599731},{"sample_id":"ERR1883195","taxon":"Sutterella","TSNE 1":-27.9419384003,"TSNE 2":150.3349609375},{"sample_id":"combined","taxon":"Bacteroides","TSNE 1":16.7871665955,"TSNE 2":-257.538482666},{"sample_id":"combined","taxon":"Blautia","TSNE 1":-83.309387207,"TSNE 2":18.95403862},{"sample_id":"combined","taxon":"Faecalibacterium","TSNE 1":162.8690185547,"TSNE 2":-108.3289031982},{"sample_id":"combined","taxon":"Lactobacillus","TSNE 1":183.2052307129,"TSNE 2":-198.2711639404},{"sample_id":"combined","taxon":"Leuconostoc","TSNE 1":-73.9986495972,"TSNE 2":57.9228668213},{"sample_id":"combined","taxon":"Parabacteroides","TSNE 1":146.7102508545,"TSNE 2":-144.3844451904},{"sample_id":"combined","taxon":"Weissella","TSNE 1":-107.9938964844,"TSNE 2":48.8910751343},{"sample_id":"kimchi","taxon":"Lactobacillus","TSNE 1":-140.277633667,"TSNE 2":10.3440027237},{"sample_id":"kimchi","taxon":"Leuconostoc","TSNE 1":-186.96434021,"TSNE 2":-1.1289404631},{"sample_id":"kimchi","taxon":"Weissella","TSNE 1":-59.0474815369,"TSNE 2":-27.8026103973}]
+        },
+        selection: {"pts": {"type": "single", "fields": ["taxon"]}},
+        mark: {
+            type: "point",
+            filled: true,
+            size: 20,
+            tooltip: {content: "data"}
+        },
+        encoding: {
+          x: {
+            field: "TSNE 1",
+            type: "quantitative",
+            scale: {zero: false}
+          },
+          y: {
+            field: "TSNE 2",
+            type: "quantitative",
+            scale: {zero: false}
+          },
+          color: {
+            condition: {
+              selection: "pts",
+              field: "taxon",
+              type: "nominal"
+            },
+            value: "lightgrey"
+          },
+          opacity: {
+              condition: {
+                  selection: "pts",
+                  value: 0.8
+              },
+              value: 0.2
+          }
+        }
+      };
+
+      // Embed the visualization in the container with id `vis`
+      vegaEmbed("#vis", vlSpec, {renderer: "svg"}).then(function(r) {
+        svg = d3.select("#vis svg");
+        svg.attr("width", "100%").attr("height", "auto");
+      });
+
+      files = {'reduced': 'sample_id,taxon,TSNE 1,TSNE 2\nERR1883195,Alistipes,-32.767307,32.316124\nERR1883195,Bacteroides,-3.703005,-236.38745\nERR1883195,Blautia,-25.654705,96.82966\nERR1883195,Coprococcus,-55.075798,182.84325\nERR1883195,Faecalibacterium,113.035866,-100.842094\nERR1883195,Parabacteroides,183.373,-140.72017\nERR1883195,Roseburia,225.24287,-100.30616\nERR1883195,Sutterella,-27.941938,150.33496\ncombined,Bacteroides,16.787167,-257.53848\ncombined,Blautia,-83.30939,18.954039\ncombined,Faecalibacterium,162.86902,-108.3289\ncombined,Lactobacillus,183.20523,-198.27116\ncombined,Leuconostoc,-73.99865,57.922867\ncombined,Parabacteroides,146.71025,-144.38445\ncombined,Weissella,-107.9939,48.891075\nkimchi,Lactobacillus,-140.27763,10.344003\nkimchi,Leuconostoc,-186.96434,-1.1289405\nkimchi,Weissella,-59.04748,-27.80261\n'};
+
+function download_data(key) {
+    var blob = new Blob([files[key]], {type: "text/csv;charset=utf-8;"}),
+        filename = key + ".csv",
+        url = window.URL.createObjectURL(blob);
+    if (navigator.msSaveBlob) { // IE 10+
+        navigator.msSaveBlob(blob, filename);
+    } else {
+        var link = document.createElement("a");
+        if (link.download !== undefined) { // feature detection
+            // Browsers that support HTML5 download attribute
+            var url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+}
+    </script>
+  </section>
+  </body>
+</html>
