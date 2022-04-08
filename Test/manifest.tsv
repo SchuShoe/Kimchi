@@ -1,4 +1,4 @@
 sample-id	absolute-filepath
-ERR1883195	/content/materials/kimchi/ERR1883195.gz
-kimchi	/content/materials/kimchi/kimchi.v001.fastq
-combined	/content/materials/kimchi/combined.fastq
+ERR1883195	/content/materials/Test/data/ERR1883195.gz
+kimchi	/content/materials/Test/data/combined.fastq
+combined	/content/materials/Test/data/combined.fastq
